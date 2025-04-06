@@ -37,13 +37,16 @@ TEMPLATES = [
 ]
 ```
 
-3. Installed `django-compressor` by running the following command in your terminal:
+3. Install `django-compressor` and `django-browser-reload` by running the following commands in your terminal:
 
 ```bash
 python -m pip install django-compressor
 ```
+```bash
+python -m pip install django-browser-reload
+```
 
-4. Add `compressor` and `flowbiteapp` (or the name of your app) to the installed apps inside the `settings.py` file:
+4. Add `compressor`,`django_browser_reload` and `flowbiteapp` (or the name of your app) to the installed apps inside the `settings.py` file:
 
 ```bash
 # config/settings.py
@@ -57,6 +60,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'compressor',  # new
     'flowbiteapp',  # new
+    'django_browser_reload' #new
 ]
 ```
 
@@ -67,10 +71,21 @@ COMPRESS_ROOT = BASE_DIR / 'static'
 
 COMPRESS_ENABLED = True
 
-STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+]
 ```
-
-6. Create two new folders and an `input.css` file inside the `static/src/` folder:
+6. Add the Middleware in the `settings.py`:
+```bash
+MIDDLEWARE = [
+    # ...
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
+    # ...
+]
+```   
+7. Create two new folders and an `input.css` file inside the `static/src/` folder:
 
 ```bash
 static
@@ -80,7 +95,7 @@ static
 
 Later we will import the Tailwind CSS directives and use it as the source file for the final stylesheet.
 
-7. Create a new `views.py` file inside `flowbiteapp/` next to `urls.py` and add the following content:
+8. Create a new `views.py` file inside `flowbiteapp/` next to `urls.py` and add the following content:
 
 ```bash
 from django.shortcuts import render
@@ -89,7 +104,7 @@ def index(request):
     return render(request, 'index.html')
 ```
 
-8. Import the newly created view instance inside the `urls.py` file by adding the following code:
+9. Import the newly created view instance inside the `urls.py` file by adding the following code:
 
 ```bash
 from .views import index
@@ -100,7 +115,7 @@ urlpatterns = [
 ]
 ```
 
-9. Create a new `_base.html` file inside the `templates/` directory:
+10. Create a new `_base.html` file inside the `templates/` directory:
 
 ```html
 <!-- templates/_base.html -->
@@ -133,7 +148,7 @@ urlpatterns = [
 </html>
 ```
 
-10. Create an `index.html` file that will be served as the homepage:
+11. Create an `index.html` file that will be served as the homepage:
 
 ```html
 <!-- templates/index.html -->
@@ -145,7 +160,7 @@ urlpatterns = [
 {% endblock content %}
 ```
 
-11. Finally, create a local server instance by running the following command:
+12. Finally, create a local server instance by running the following command:
 
 ```bash
 python manage.py runserver
