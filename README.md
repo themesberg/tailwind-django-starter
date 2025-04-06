@@ -37,13 +37,16 @@ TEMPLATES = [
 ]
 ```
 
-3. Installed `django-compressor` by running the following command in your terminal:
+3. Install `django-compressor` and `django-browser-reload` by running the following commands in your terminal:
 
 ```bash
 python -m pip install django-compressor
 ```
+```bash
+python -m pip install django-browser-reload
+```
 
-4. Add `compressor` and `flowbiteapp` (or the name of your app) to the installed apps inside the `settings.py` file:
+4. Add `compressor`,`django_browser_reload` and `flowbiteapp` (or the name of your app) to the installed apps inside the `settings.py` file:
 
 ```bash
 # config/settings.py
@@ -57,6 +60,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'compressor',  # new
     'flowbiteapp',  # new
+    'django_browser_reload' #new
 ]
 ```
 
@@ -67,9 +71,20 @@ COMPRESS_ROOT = BASE_DIR / 'static'
 
 COMPRESS_ENABLED = True
 
-STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+]
 ```
-
+6. Add the Middleware in the `settings.py`:
+```bash
+MIDDLEWARE = [
+    # ...
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
+    # ...
+]
+```   
 6. Create two new folders and an `input.css` file inside the `static/src/` folder:
 
 ```bash
